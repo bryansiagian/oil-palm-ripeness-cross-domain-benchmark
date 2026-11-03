@@ -1,0 +1,20 @@
+
+# Dataset 1: South Kalimantan (Scientific Data 2023)
+# Original YOLO class IDs verified through
+# object distribution and visual inspection.
+
+path: ../data/raw/dataset1
+
+train: train
+val: valid
+test: test
+
+nc: 6
+
+names:
+  0: Empty Bunch
+  1: Under-ripe
+  2: Abnormal FFB
+  3: Ripe
+  4: Unripe
+  5: Over Ripe
