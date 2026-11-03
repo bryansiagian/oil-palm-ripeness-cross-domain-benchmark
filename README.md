@@ -25,6 +25,14 @@ A cross-domain object detection benchmark for oil palm fresh fruit bunch (FFB) r
 
 Initial setup and dataset auditing.
 
+## Dataset Setup
+
+The datasets are not included in this repository.
+
+Please follow the [Dataset Setup Guide](docs/dataset_setup.md)
+to download the original datasets and configure the required
+directory structure before running the experiments.
+
 ## Notes
 
 Dataset taxonomy harmonization and experimental protocols will be defined after inspecting the original datasets and annotations.
