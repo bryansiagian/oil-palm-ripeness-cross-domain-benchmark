@@ -1,0 +1,37 @@
+{
+    "dataset": "dataset3",
+    "source": "data/raw/dataset3",
+    "destination": "data/annotation/dataset3",
+    "original_images": 466,
+    "duplicate_exclusions": 14,
+    "unique_images": 452,
+    "non_target_exclusions": 98,
+    "prepared_images": 354,
+    "target_classes": {
+        "0": "Unripe",
+        "1": "Ripe"
+    },
+    "distribution": {
+        "train": {
+            "images": 280,
+            "Unripe": 123,
+            "Ripe": 157
+        },
+        "test": {
+            "images": 74,
+            "Unripe": 34,
+            "Ripe": 40
+        },
+        "total": {
+            "images": 354,
+            "Unripe": 157,
+            "Ripe": 197
+        }
+    },
+    "remaining_duplicate_images": 0,
+    "original_test_split_preserved": true,
+    "raw_data_modified": false,
+    "bounding_box_annotations_created": 0,
+    "annotation_status": "Pending",
+    "preparation_status": "Completed"
+}
