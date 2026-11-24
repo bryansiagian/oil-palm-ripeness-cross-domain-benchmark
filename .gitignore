@@ -8,6 +8,7 @@ venv/
 # Datasets
 data/raw/
 data/processed/
+MunirahRosbi-Outdoor-Tenera-Oil-Palm-Fruit-Image-b27ea70
 
 # Model weights
 *.pt
