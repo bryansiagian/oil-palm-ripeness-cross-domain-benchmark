@@ -1,0 +1,107 @@
+{
+    "dataset": "dataset3",
+    "source": "data/raw/dataset3",
+    "annotation_format": "image_classification",
+    "total_images": 466,
+    "valid_images": 466,
+    "corrupted_images": 0,
+    "unique_sha256_hashes": 452,
+    "duplicate_hash_groups": 13,
+    "cross_split_duplicate_groups": 4,
+    "same_split_duplicate_groups": 9,
+    "conflicting_class_duplicate_groups": 0,
+    "recommended_exclusions": 14,
+    "cross_split_exclusions": 5,
+    "same_split_exclusions": 9,
+    "remaining_images": 452,
+    "remaining_unique_hashes": 452,
+    "remaining_duplicate_images": 0,
+    "target_images_after_proposed_exclusions": 354,
+    "target_class_distribution": {
+        "Ripe": 197,
+        "Unripe": 157
+    },
+    "target_split_distribution": {
+        "Train": {
+            "Ripe": 157,
+            "Unripe": 123
+        },
+        "Test": {
+            "Ripe": 40,
+            "Unripe": 34
+        }
+    },
+    "original_distribution": {
+        "Train": {
+            "Damaged": 12,
+            "Empty": 9,
+            "Overripe": 60,
+            "Ripe": 160,
+            "Unripe": 130,
+            "Total": 371
+        },
+        "Test": {
+            "Damaged": 3,
+            "Empty": 3,
+            "Overripe": 14,
+            "Ripe": 41,
+            "Unripe": 34,
+            "Total": 95
+        },
+        "Total": {
+            "Damaged": 15,
+            "Empty": 12,
+            "Overripe": 74,
+            "Ripe": 201,
+            "Unripe": 164,
+            "Total": 466
+        }
+    },
+    "distribution_after_proposed_exclusions": {
+        "Train": {
+            "Damaged": 12,
+            "Empty": 8,
+            "Overripe": 58,
+            "Ripe": 157,
+            "Unripe": 123,
+            "Total": 358
+        },
+        "Test": {
+            "Damaged": 3,
+            "Empty": 3,
+            "Overripe": 14,
+            "Ripe": 40,
+            "Unripe": 34,
+            "Total": 94
+        },
+        "Total": {
+            "Damaged": 15,
+            "Empty": 11,
+            "Overripe": 72,
+            "Ripe": 197,
+            "Unripe": 157,
+            "Total": 452
+        }
+    },
+    "image_formats": {
+        "JPEG": 466
+    },
+    "color_modes": {
+        "RGB": 466
+    },
+    "image_dimensions": {
+        "757x568": 233,
+        "4032x3024": 80,
+        "2400x3200": 63,
+        "2250x4000": 31,
+        "3024x4032": 28,
+        "3200x2400": 23,
+        "824x464": 6,
+        "2756x2381": 1,
+        "4160x3120": 1
+    },
+    "possible_annotation_files": [],
+    "bounding_box_annotation_status": "Pending",
+    "exclusions_applied_to_raw_data": false,
+    "audit_status": "Completed"
+}
