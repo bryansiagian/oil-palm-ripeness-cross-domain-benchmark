@@ -202,6 +202,46 @@ Original datasets will remain unchanged.
 Processed datasets will be stored separately under
 `data/processed/`.
 
+
+## Preprocessing Results
+
+Dataset 1 and Dataset 2 have been harmonized into the
+shared two-class taxonomy.
+
+| Dataset | Original Images | Retained Images | Unripe Objects | Ripe Objects | Total Objects |
+|---------|----------------:|----------------:|---------------:|-------------:|--------------:|
+| Dataset 1 | 4160 | 2889 | 2913 | 2973 | 5886 |
+| Dataset 2 | 12569 | 8064 | 9062 | 3307 | 12369 |
+| Total | 16729 | 10953 | 11975 | 6280 | 18255 |
+
+The preprocessing pipeline preserves original bounding-box
+coordinates and dataset splits while removing non-target
+annotations and images without target objects.
+
+### Run Preprocessing
+
+Install dependencies:
+
+    python -m pip install pyyaml pillow
+
+Execute:
+
+    python -m scripts.preprocessing.preprocess_dataset1
+    python -m scripts.preprocessing.preprocess_dataset2
+
+Processed datasets are stored in:
+
+- `data/processed/dataset1/`
+- `data/processed/dataset2/`
+
+Preprocessing reports are available in:
+
+- [Dataset 1 Summary](results/preprocessing/dataset1_summary.json)
+- [Dataset 2 Summary](results/preprocessing/dataset2_summary.json)
+- [Preprocessing Report](docs/preprocessing_report.md)
+
+Final dataset validation and leakage checks are pending.
+
 ## Repository Structure
 
 ```text
