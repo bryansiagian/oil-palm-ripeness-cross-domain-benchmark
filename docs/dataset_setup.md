@@ -36,12 +36,38 @@ oil-palm-ripeness-cross-domain-benchmark/
 │   │       ├── FFBtrain/
 │   │       └── FFBtest/
 │   └── processed/
+│       ├── dataset1/
+│       │   ├── data.yaml
+│       │   ├── train/
+│       │   │   ├── images/
+│       │   │   └── labels/
+│       │   ├── valid/
+│       │   │   ├── images/
+│       │   │   └── labels/
+│       │   └── test/
+│       │       ├── images/
+│       │       └── labels/
+│       └── dataset2/
+│           ├── data.yaml
+│           ├── train/
+│           │   ├── images/
+│           │   └── labels/
+│           ├── valid/
+│           │   ├── images/
+│           │   └── labels/
+│           └── test/
+│               ├── images/
+│               └── labels/
 ├── docs/
 │   ├── dataset_setup.md
 │   ├── dataset2_audit.md
 │   ├── dataset3_audit.md
-│   └── class_harmonization.md
+│   ├── class_harmonization.md
+│   └── preprocessing_report.md
 ├── results/
+│   ├── preprocessing/
+│   │   ├── dataset1_summary.json
+│   │   └── dataset2_summary.json
 │   └── visualizations/
 │       ├── dataset1/
 │       ├── dataset2/
@@ -52,13 +78,23 @@ oil-palm-ripeness-cross-domain-benchmark/
 │   ├── audit_dataset3.py
 │   ├── validate_dataset2.py
 │   ├── visualize_dataset1.py
-│   └── visualize_dataset3.py
+│   ├── visualize_dataset3.py
+│   └── preprocessing/
+│       ├── __init__.py
+│       ├── common.py
+│       ├── preprocess_dataset1.py
+│       └── preprocess_dataset2.py
 ├── .gitignore
 └── README.md
 ```
 
-The `data/processed/` directory is reserved for future
-harmonized datasets and experimental data.
+The `data/processed/` directory contains harmonized
+datasets and will also store experimental datasets.
+
+Dataset 1 and Dataset 2 preprocessing outputs are
+available under `data/processed/dataset1/` and
+`data/processed/dataset2/`, respectively, after running
+the preprocessing scripts.
 
 Original dataset files must remain unchanged.
 
@@ -154,9 +190,11 @@ whereas the local audit counts 14,558 objects.
 
 This one-object discrepancy remains unresolved.
 
-Additional image integrity, annotation validity,
-and duplicate checks are required before final
-model training.
+Image integrity and annotation validity checks were
+performed during preprocessing.
+
+Additional duplicate and leakage checks are required
+before final model training.
 
 ### 2.6. Reproduce the Audit
 
@@ -312,8 +350,12 @@ originally reference the extracted archive directory
 at the repository root.
 
 If the dataset is placed under `data/raw/dataset3/`,
-update the `DATASET_PATH` variable in both scripts
-before running them.
+ensure that the `DATASET_PATH` variable in both scripts
+uses the following configuration:
+
+```python
+DATASET_PATH = PROJECT_ROOT / "data" / "raw" / "dataset3"
+```
 
 ### 4.3. Original Class Distribution
 
@@ -462,7 +504,7 @@ The complete mapping is available in:
 - [Class Mapping Configuration](../configs/class_mapping.yaml)
 - [Class Harmonization Documentation](class_harmonization.md)
 
-### 6.3. Expected Target Object Distribution
+### 6.3. Target Object Distribution
 
 | Dataset | Unripe | Ripe | Total Objects |
 | --- | ---: | ---: | ---: |
@@ -470,11 +512,11 @@ The complete mapping is available in:
 | Dataset 2 | 9,062 | 3,307 | 12,369 |
 | **Total** | **11,975** | **6,280** | **18,255** |
 
-These counts represent target annotations identified
-during the initial audits.
+These counts have been confirmed through Dataset 1
+and Dataset 2 preprocessing.
 
-Final counts may change after preprocessing,
-annotation validation, and leakage mitigation.
+Final counts may change after further annotation
+validation and leakage mitigation.
 
 For Dataset 3, the expected target image distribution
 after applying the proposed duplicate exclusions is:
@@ -500,7 +542,7 @@ The following policies apply to the unified dataset:
 6. Preserve valid bounding-box coordinates.
 7. Preserve original dataset splits unless documented
    leakage mitigation requires changes.
-8. Record all excluded images and annotations.
+8. Record excluded filenames and removed annotation counts.
 9. Validate processed datasets before model training.
 10. Store processed datasets under `data/processed/`.
 
@@ -513,7 +555,255 @@ evaluation of false positives on non-target-only scenes.
 
 All models must follow the same preprocessing policy.
 
-## 8. Model Compatibility
+## 8. Processed Dataset Setup
+
+Dataset 1 and Dataset 2 preprocessing has been completed
+using the shared class mapping configuration.
+
+### 8.1. Requirements
+
+Install the required preprocessing dependencies:
+
+```bash
+python -m pip install pyyaml pillow
+```
+
+Ensure that the original datasets have been extracted
+into their corresponding directories under `data/raw/`.
+
+All preprocessing commands must be executed from
+the repository root.
+
+### 8.2. Shared Preprocessing Pipeline
+
+The preprocessing implementation consists of:
+
+| File | Description |
+| --- | --- |
+| `scripts/preprocessing/__init__.py` | Package initialization |
+| `scripts/preprocessing/common.py` | Shared preprocessing and validation functions |
+| `scripts/preprocessing/preprocess_dataset1.py` | Dataset 1 preprocessing entry point |
+| `scripts/preprocessing/preprocess_dataset2.py` | Dataset 2 preprocessing entry point |
+
+Both datasets use the same preprocessing logic
+and class mapping configuration.
+
+The pipeline validates image integrity, image-label
+correspondence, annotation format, and bounding-box
+coordinates before producing the harmonized datasets.
+
+### 8.3. Preprocess Dataset 1
+
+Run:
+
+```bash
+python -m scripts.preprocessing.preprocess_dataset1
+```
+
+Input directory:
+
+```text
+data/raw/dataset1/
+```
+
+Output directory:
+
+```text
+data/processed/dataset1/
+```
+
+Preprocessing results:
+
+| Split | Original Images | Retained Images | Excluded Images | Unripe Objects | Ripe Objects |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Train | 2,908 | 2,046 | 862 | 2,005 | 2,142 |
+| Validation | 835 | 578 | 257 | 642 | 585 |
+| Test | 417 | 265 | 152 | 266 | 246 |
+| **Total** | **4,160** | **2,889** | **1,271** | **2,913** | **2,973** |
+
+| Metric | Result |
+| --- | ---: |
+| Original objects | 14,558 |
+| Retained objects | 5,886 |
+| Removed objects | 8,672 |
+| Mixed-class images retained | 1,903 |
+| Image retention rate | 69.45% |
+| Object retention rate | 40.43% |
+
+The generated summary report is available at:
+
+[Dataset 1 Preprocessing Summary](../results/preprocessing/dataset1_summary.json)
+
+### 8.4. Preprocess Dataset 2
+
+Run:
+
+```bash
+python -m scripts.preprocessing.preprocess_dataset2
+```
+
+Input directory:
+
+```text
+data/raw/dataset2/yolov8/
+```
+
+Output directory:
+
+```text
+data/processed/dataset2/
+```
+
+Preprocessing results:
+
+| Split | Original Images | Retained Images | Excluded Images | Unripe Objects | Ripe Objects |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Train | 10,221 | 6,080 | 4,141 | 6,439 | 2,669 |
+| Validation | 1,583 | 1,337 | 246 | 1,789 | 443 |
+| Test | 765 | 647 | 118 | 834 | 195 |
+| **Total** | **12,569** | **8,064** | **4,505** | **9,062** | **3,307** |
+
+| Metric | Result |
+| --- | ---: |
+| Original objects | 21,825 |
+| Retained objects | 12,369 |
+| Removed objects | 9,456 |
+| Mixed-class images retained | 4,747 |
+| Image retention rate | 64.16% |
+| Object retention rate | 56.67% |
+
+The generated summary report is available at:
+
+[Dataset 2 Preprocessing Summary](../results/preprocessing/dataset2_summary.json)
+
+### 8.5. Combined Preprocessing Results
+
+| Metric | Dataset 1 | Dataset 2 | Total |
+| --- | ---: | ---: | ---: |
+| Original images | 4,160 | 12,569 | 16,729 |
+| Retained images | 2,889 | 8,064 | 10,953 |
+| Excluded images | 1,271 | 4,505 | 5,776 |
+| Original objects | 14,558 | 21,825 | 36,383 |
+| Retained objects | 5,886 | 12,369 | 18,255 |
+| Removed objects | 8,672 | 9,456 | 18,128 |
+| Mixed-class images retained | 1,903 | 4,747 | 6,650 |
+
+The combined split distribution is:
+
+| Split | Images | Unripe Objects | Ripe Objects | Total Objects |
+| --- | ---: | ---: | ---: | ---: |
+| Train | 8,126 | 8,444 | 4,811 | 13,255 |
+| Validation | 1,915 | 2,431 | 1,028 | 3,459 |
+| Test | 912 | 1,100 | 441 | 1,541 |
+| **Total** | **10,953** | **11,975** | **6,280** | **18,255** |
+
+These statistics summarize both datasets without
+physically merging their samples.
+
+The original domain identities and dataset splits
+are preserved.
+
+### 8.6. Processed Dataset Format
+
+Both processed datasets use the same directory structure:
+
+```text
+dataset/
+├── data.yaml
+├── train/
+│   ├── images/
+│   └── labels/
+├── valid/
+│   ├── images/
+│   └── labels/
+└── test/
+    ├── images/
+    └── labels/
+```
+
+Each processed dataset contains a generated
+YOLO-compatible `data.yaml` configuration:
+
+```yaml
+train: train/images
+val: valid/images
+test: test/images
+nc: 2
+names:
+  0: Unripe
+  1: Ripe
+```
+
+Dataset paths must be resolved relative to the
+correct dataset root during model integration.
+
+Each annotation file contains only the target
+class IDs 0 and 1.
+
+The original bounding-box coordinate values
+are preserved during class remapping.
+
+### 8.7. Reproducing the Preprocessing Results
+
+Raw and processed dataset files are not tracked by Git.
+
+Each team member must download the original datasets
+and execute the preprocessing scripts locally.
+
+After cloning or updating the repository, the
+preprocessing summary reports may already exist
+under `results/preprocessing/`.
+
+The current pipeline does not overwrite existing
+processed datasets or summary reports automatically.
+
+Before running or rerunning preprocessing, back up
+or rename any existing output directory and its
+corresponding summary report.
+
+The relevant output directories are:
+
+- `data/processed/dataset1/`
+- `data/processed/dataset2/`
+
+The relevant summary reports are:
+
+- `results/preprocessing/dataset1_summary.json`
+- `results/preprocessing/dataset2_summary.json`
+
+Run the preprocessing commands:
+
+```bash
+python -m scripts.preprocessing.preprocess_dataset1
+python -m scripts.preprocessing.preprocess_dataset2
+```
+
+Compare the generated statistics with the
+version-controlled preprocessing reports.
+
+Differences in generated statistics must be
+investigated before model training.
+
+### 8.8. Dataset 3 Preprocessing Status
+
+Dataset 3 preprocessing is pending bounding-box
+annotation and duplicate handling.
+
+After annotation and validation, Dataset 3 will
+use the same target class taxonomy and standardized
+processed dataset structure.
+
+The planned output directory is:
+
+```text
+data/processed/dataset3/
+```
+
+See the [Preprocessing Report](preprocessing_report.md)
+for the complete preprocessing methodology,
+results, and limitations.
+
+## 9. Model Compatibility
 
 The processed datasets will support the following models:
 
@@ -537,7 +827,15 @@ Annotation conversion must preserve:
 All models must use equivalent dataset samples
 for each benchmark experiment.
 
-## 9. Audit and Preprocessing Status
+The processed Dataset 1 and Dataset 2 outputs
+can be used for preliminary model integration.
+
+Final benchmark training must wait until dataset
+validation, duplicate and leakage mitigation,
+annotation conversion, and experimental split
+preparation have been completed.
+
+## 10. Audit and Preprocessing Status
 
 | Task | Status |
 | --- | --- |
@@ -550,19 +848,27 @@ for each benchmark experiment.
 | Dataset 3 duplicate detection | Completed |
 | Dataset 3 visualization | Completed |
 | Unified class taxonomy | Defined |
-| Dataset 1 preprocessing | Pending |
-| Dataset 2 preprocessing | Pending |
+| Original-to-target class mapping | Defined |
+| Shared preprocessing pipeline | Completed |
+| Dataset 1 preprocessing | Completed |
+| Dataset 2 preprocessing | Completed |
+| Dataset 1 preprocessing report | Completed |
+| Dataset 2 preprocessing report | Completed |
 | Dataset 3 bounding-box annotation | Pending |
 | Dataset 3 preprocessing | Pending |
+| Final duplicate and leakage mitigation | Pending |
 | Final dataset validation | Pending |
 | Annotation format conversion | Pending |
 | Experimental split preparation | Pending |
 
-Initial audit completion does not establish that
-the datasets are fully free from annotation errors
-or data leakage.
+Initial audit and preprocessing completion do not
+establish that the datasets are fully free from
+annotation errors or data leakage.
 
-## 10. Git Tracking
+Further validation is required before final
+benchmark experiments.
+
+## 11. Git Tracking
 
 Raw and processed datasets must remain outside
 version control.
@@ -582,6 +888,7 @@ The following files should be tracked:
 - Validation scripts.
 - Dataset documentation.
 - Selected visualization samples.
+- Preprocessing summary reports.
 - Experimental configurations.
 - Benchmark result summaries.
 
@@ -591,3 +898,7 @@ or model weights.
 
 Preserve the original downloads and annotations
 to ensure reproducibility.
+
+Processed datasets must be reproducible from the
+original datasets, version-controlled configurations,
+and preprocessing scripts.
